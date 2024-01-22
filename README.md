@@ -44,6 +44,12 @@ https://github.com/jpd61/employee-tracker
 
 https://www.youtube.com/watch?v=gZugKSoAyoY
 
+https://www.tabnine.com/code/javascript/functions/mysql/createConnection
+
+https://www.youtube.com/watch?v=eIjbSH3Imb8
+
+https://www.w3schools.com/nodejs/nodejs_mysql_select.asp
+
 ## License
 
 The last section of a high-quality README file is the license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, refer to [https://choosealicense.com/](https://choosealicense.com/).
