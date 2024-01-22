@@ -3,7 +3,7 @@ const questions = [
         type: 'list',
         name: 'options',
         message: 'What Would Like to do Today?',
-        choices: ['View', 'Add', 'Update', 'Delete']
+        choices: ['View', 'Add', 'Update', 'Delete', 'END']
 
     },
     {
@@ -13,7 +13,7 @@ const questions = [
             return answers.options === 'View';
         },
         message: 'Here are all the View Options: ',
-        choices: ['View All Departments', 'View All Roles', 
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 
         'View Employees by Manager', 'View Employees by Department', 
         'View Total Utilized Budget', 'Cancel']
     },
