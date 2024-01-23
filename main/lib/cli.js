@@ -2,9 +2,10 @@ const inquirer = require('inquirer');
 const questions = require('./questions');
 const title = require("asciiart-logo");
 const db = require('../db');
-const queries = require('../db/functions');
+const queries = require('../db/viewdb');
 
 function startAgain() {
+    console.log('\n');
     cli();
 }
 // Display logo text, load main prompts
@@ -71,19 +72,15 @@ function cli() {
                     break;
                 case 'Delete':
                     if (`${answers.delete}` === 'Departments') {
-                        console.log('Remove Department');
-                        startAgain();
+                        deleteDepartment();
                     }
                     else if (`${answers.delete}` === 'Roles') {
-                        console.log('Remove Roles');
-                        startAgain();
+                        deleteRole();
                     }
                     else if (`${answers.delete}` === 'Employees') {
-                        console.log('Terminate Employee')
-                        startAgain();
+                        layoffEmployee()
                     }
                     else {
-                        console.log('cancel');
                         startAgain();
                     }
                     break;
@@ -335,9 +332,11 @@ function updateEmRole() {
                                         choices: rChoices
                                     }
                                 ])
-                                .then(res => db.updateRole(employeeID, res.roleID))
-                                .then(() => console.log("Role updated"))
-                                .then(() => startAgain())
+                                .then(res => {
+                                    db.updateRole(employeeID, res.roleID);
+                                    console.log("Role updated");
+                                    startAgain();
+                                });
                         });
                 });
         })
@@ -380,11 +379,132 @@ function updateEmManager() {
                                         choices: mChoices
                                     }
                                 ])
-                                .then(res => db.updateEmManager(employeeID, res.managerID))
-                                .then(() => console.log("Employee reassigned"))
-                                .then(() => startAgain())
+                                .then(res => {
+                                    db.updateEmManager(employeeID, res.managerID);
+                                    console.log("Employee reassigned");
+                                    startAgain();
+                                });
                         })
                 })
         })
 }
-module.exports = cli;
+
+//DELETE
+
+function deleteDepartment() {
+    db.searchAllDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            const depChoices = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }));
+            inquirer
+                .prompt([
+                    {
+                        type: "confirm",
+                        name: "confirm",
+                        message: 'Are you sure you would like to delete a department? Doing so is irreversible.'
+                    },
+                    {
+                        type: "list",
+                        name: "departmentID",
+                        when: function (answers) {
+                            return answers.confirm === true;
+                        },
+                        message:
+                            "Delete which department? (WARNING: This will also remove associated roles and employees)",
+                        choices: depChoices
+                    }
+                ])
+                .then(res => {
+                    if (res.confirm) {
+                        db.deleteDepartment(res.departmentID);
+                        console.log("Removed selected department from the database");
+                        startAgain();
+                    }
+                    else{
+                        startAgain();
+                    }
+                });
+
+        })
+}
+
+function deleteRole() {
+    db.searchAllRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            const rChoices = roles.map(({ id, title }) => ({
+                name: title,
+                value: id
+            }));
+            inquirer
+                .prompt([
+                    {
+                        type: "confirm",
+                        name: "confirm",
+                        message: 'Are you sure you would like to remove an employee? Doing so is irreversible.'
+                    },
+                    {
+                        type: "list",
+                        name: "roleID",
+                        when: function (answers) {
+                            return answers.confirm === true;
+                        },
+                        message:
+                            "Delete which role? (WARNING: This will also remove employees)",
+                        choices: rChoices
+                    }
+                ])
+                .then(res => {
+                    if (res.confirm) {
+                        db.deleteRole(res.roleID);
+                        console.log("Role deleted from the database");
+                        startAgain();
+                    }
+                    else{
+                        startAgain();
+                    }
+                });
+        })
+}
+
+function layoffEmployee() {
+    db.searchAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const emChoices = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+            inquirer
+                .prompt([
+                    {
+                        type: "confirm",
+                        name: "confirm",
+                        message: 'Are you sure you would like to delete an active role? Doing so is irreversible.'
+                    },
+                    {
+                        type: "list",
+                        name: "employeeID",
+                        when: function (answers) {
+                            return answers.confirm === true;
+                        },
+                        message: "Which employee would you like to remove from the system?",
+                        choices: emChoices
+                    }
+                ])
+                .then(res => {
+                    if (res.confirm) {
+                        db.deleteEmployee(res.employeeID);
+                        console.log("Employee removed from the database");
+                        startAgain();
+                    }
+                    else{
+                        startAgain();
+                    }
+                });
+        })
+}
+module.exports = {cli, init};
