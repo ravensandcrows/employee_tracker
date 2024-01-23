@@ -24,7 +24,7 @@ const questions = [
             return answers.options === 'Add'
         },
         message: 'What would you like to add today?',
-        choices: ['Add a Role', 'Add an Employee', 'Cancel']
+        choices: ['Add a Role', 'Add an Employee', 'Add a Department', 'Cancel']
     },
     {
         type: 'list',
