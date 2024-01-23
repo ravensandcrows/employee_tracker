@@ -43,6 +43,14 @@ class DB {
       departmentID
     );
   }
+
+  // find all potential managers expect current employee
+  searchAllManagers(employeeID) {
+    return this.connection.promise().query(
+      "SELECT id, first_name, last_name FROM employee WHERE id != ?",
+      employeeID
+    );
+  }
   // sums up utilized department budget from all deps
   findDepartmentBudget() {
     return this.connection.promise().query(
@@ -60,10 +68,26 @@ class DB {
     return this.connection.promise().query("INSERT INTO employee SET ?", employee);
   }
 
-    // build  department
-    buildDepartment(department) {
-      return this.connection.promise().query("INSERT INTO department SET ?", department);
-    }
+  // build  department
+  buildDepartment(department) {
+    return this.connection.promise().query("INSERT INTO department SET ?", department);
+  }
+
+  // update the employee's role
+  updateRole(employeeID, roleID) {
+    return this.connection.promise().query(
+      "UPDATE employee SET role_id = ? WHERE id = ?",
+      [roleID, employeeID]
+    );
+  }
+
+  // Update the given employee's manager
+  updateEmManager(employeeID, managerID) {
+    return this.connection.promise().query(
+      "UPDATE employee SET manager_id = ? WHERE id = ?",
+      [managerID, employeeID]
+    );
+  }
 }
 
 module.exports = new DB(connection);

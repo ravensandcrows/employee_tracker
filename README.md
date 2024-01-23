@@ -50,6 +50,10 @@ https://www.youtube.com/watch?v=eIjbSH3Imb8
 
 https://www.w3schools.com/nodejs/nodejs_mysql_select.asp
 
+https://www.simplilearn.com/tutorials/sql-tutorial/sql-update
+
+https://www.w3schools.com/sql/sql_delete.asp
+
 ## License
 
 The last section of a high-quality README file is the license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, refer to [https://choosealicense.com/](https://choosealicense.com/).
