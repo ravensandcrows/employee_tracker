@@ -51,7 +51,7 @@ function cli() {
                     else if (`${answers.add}` === 'Add an Employee') {
                         addEmployee();
                     }
-                    else if(`${answers.add}` === 'Add a Department'){
+                    else if (`${answers.add}` === 'Add a Department') {
                         addDepartment();
                     }
                     else {
@@ -60,15 +60,12 @@ function cli() {
                     break;
                 case 'Update':
                     if (`${answers.update}` === 'Update Employee Role') {
-                        console.log('Update Employee Role');
-                        startAgain();
+                        updateEmRole();
                     }
                     else if (`${answers.update}` === 'Update Employee Managers') {
-                        console.log('Update Employee Managers');
-                        startAgain();
+                        updateEmManager();
                     }
                     else {
-                        console.log('cancel');
                         startAgain();
                     }
                     break;
@@ -302,4 +299,92 @@ function addDepartment() {
         })
 }
 
+//UPDATE
+function updateEmRole() {
+    db.searchAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+            inquirer
+                .prompt([
+                    {
+                        type: "list",
+                        name: "employeeID",
+                        message: "Who's role would you like to update?",
+                        choices: employeeChoices
+                    }
+                ])
+                .then(res => {
+                    let employeeID = res.employeeID;
+                    db.searchAllRoles()
+                        .then(([rows]) => {
+                            let roles = rows;
+                            const rChoices = roles.map(({ id, title }) => ({
+                                name: title,
+                                value: id
+                            }));
+                            inquirer
+                                .prompt([
+                                    {
+                                        type: "list",
+                                        name: "roleID",
+                                        message: "Please select the new role:",
+                                        choices: rChoices
+                                    }
+                                ])
+                                .then(res => db.updateRole(employeeID, res.roleID))
+                                .then(() => console.log("Role updated"))
+                                .then(() => startAgain())
+                        });
+                });
+        })
+}
+
+// Update an employee's manager
+function updateEmManager() {
+    db.searchAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const emChoices = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+            inquirer
+                .prompt([
+                    {
+                        type: "list",
+                        name: "employeeID",
+                        message: "Reassign which employee:",
+                        choices: emChoices
+                    }
+                ])
+                .then(res => {
+                    let employeeID = res.employeeID
+                    db.searchAllManagers(employeeID)
+                        .then(([rows]) => {
+                            let managers = rows;
+                            const mChoices = managers.map(({ id, first_name, last_name }) => ({
+                                name: `${first_name} ${last_name}`,
+                                value: id
+                            }));
+                            inquirer
+                                .prompt([
+                                    {
+                                        type: "list",
+                                        name: "managerID",
+                                        message:
+                                            "Which manager should the selected employee be assigned to?",
+                                        choices: mChoices
+                                    }
+                                ])
+                                .then(res => db.updateEmManager(employeeID, res.managerID))
+                                .then(() => console.log("Employee reassigned"))
+                                .then(() => startAgain())
+                        })
+                })
+        })
+}
 module.exports = cli;
