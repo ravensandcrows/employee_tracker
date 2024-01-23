@@ -43,7 +43,7 @@ const questions = [
         },
         message: 'What would you like to delete today?',
         choices: ['Departments', 'Roles', 'Employees', 'Cancel']
-    }
+    },
 ]
 
 module.exports = questions;

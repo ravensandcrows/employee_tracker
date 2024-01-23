@@ -14,12 +14,41 @@ class DB {
     );
   }
 
-    // Find all departments
-    searchAllDepartments() {
-      return this.connection.promise().query(
-        "SELECT department.id, department.name FROM department;"
-      );
-    }
+  // find all departments
+  searchAllDepartments() {
+    return this.connection.promise().query(
+      "SELECT department.id, department.name FROM department;"
+    );
+  }
+
+  // searches for all roles + joins with departments 
+  searchAllRoles() {
+    return this.connection.promise().query(
+      "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
+    );
+  }
+
+  // search all employees by manager, join with departments and roles to display titles and department names
+  searchAllEmployeesByManager(managerId) {
+    return this.connection.promise().query(
+      "SELECT employee.id, employee.first_name, employee.last_name, department.name AS department, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id WHERE manager_id = ?;",
+      managerId
+    );
+  }
+
+  //search for all employees within the department
+  searchAllEmployeesByDepartment(departmentId) {
+    return this.connection.promise().query(
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department department on role.department_id = department.id WHERE department.id = ?;",
+      departmentId
+    );
+  }
+  // sums up utilized department budget from all deps
+  findDepartmentBudget() {
+    return this.connection.promise().query(
+      "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id GROUP BY department.id, department.name;"
+    );
+  }
 }
 
 module.exports = new DB(connection);
