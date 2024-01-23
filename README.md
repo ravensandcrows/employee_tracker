@@ -2,12 +2,8 @@
 
 ## Description
 
-Provide a short description explaining the what, why, and how of your project. Use the following questions as a guide:
-
-- What was your motivation?
-- Why did you build this project? (Note: the answer is not "Because it was a homework assignment.")
-- What problem does it solve?
-- What did you learn?
+This project utilize SQL databases to view, add, update, and delete and employee and department database. This allows management to check current roles, salary, and employees in one place. You can
+also view who reports under who, utilized budget, and other key aspects for employee/department management.
 
 ## Table of Contents (Optional)
 
@@ -17,18 +13,23 @@ If your README is long, add a table of contents to make it easy for users to fin
 - [Usage](#usage)
 - [Credits](#credits)
 - [License](#license)
+- [Features](#features)
 
 ## Installation
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+Download a zip file from this github repo: https://github.com/ravensandcrows/employee_tracker.git
+
+Open up the file in a source-code editor and open in an integrated terminal. Ensure you already have
+node.js in your system (https://nodejs.org/en/about).
+
+After that in the integrated terminal write in npm i
+followed by npm start. 
 
 ## Usage
 
-Provide instructions and examples for use. Include screenshots as needed.
+After starting the command line interface, make your selections to either view, add, delete, update your database. For a detailed walkthrough please refer to this video:
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative file path, add it to your README using the following syntax:
-
-![alt text](assets/images/screenshot.png)
+https://drive.google.com/file/d/1P7JrNYbzbuRLYRugNYQ_EdAfppcEt2SS/view
 
 ## Credits
 
@@ -56,26 +57,32 @@ https://www.w3schools.com/sql/sql_delete.asp
 
 ## License
 
-The last section of a high-quality README file is the license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, refer to [https://choosealicense.com/](https://choosealicense.com/).
-
----
-
-🏆 The previous sections are the bare minimum, and your project will ultimately determine the content of this document. You might also want to consider adding the following sections.
-
-## Badges
-
-![badmath](https://img.shields.io/github/languages/top/nielsenjared/badmath)
-
-Badges aren't necessary, but they demonstrate street cred. Badges let other developers know that you know what you're doing. Check out the badges hosted by [shields.io](https://shields.io/). You may not understand what they all represent now, but you will in time.
+MIT
 
 ## Features
 
-If your project has a lot of features, list them here.
+View:
 
-## How to Contribute
+View All Departments: Shows you a table of the current departments in your database
+View All Roles: Shows all the roles in your database and their associated salary
+View All Employees: Shows all the current employees in your database
+View Employees by Manager: Shows all the current employees working under a manager
+View Employees by Department: Shows all the current employees in a department
+View Total Utilized Budget: Shows the current budget within each department
 
-If you created an application or package and would like other developers to contribute to it, you can include guidelines for how to do so. The [Contributor Covenant](https://www.contributor-covenant.org/) is an industry standard, but you can always write your own if you'd prefer.
+Add: 
 
-## Tests
+Add a Role: Allows you to create a new role with all its associations to be added to the database
+Add an Employee: Allows you to add a new employee to the database 
+Add a Department: Allows you to create a new department
 
-Go the extra mile and write tests for your application. Then provide examples on how to run them here.
+Update:
+
+Update Employee Role: Update an employees role
+Update Employee Managers: Update an employees associated manager
+
+Delete:
+Departments: Delete a department and the roles/employees from the database
+Roles: Delete a role and associated employees from the database
+Employees: Delete a specfic employee
+
