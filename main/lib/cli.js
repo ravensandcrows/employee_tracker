@@ -5,51 +5,42 @@ const db = require('../db');
 const queries = require('../db/functions');
 
 function startAgain(){
-    const cli = new CLI();
-    cli.run();
+    cli();
 }
 // Display logo text, load main prompts
 function init() {
-    const logoText = title({ name: "Employee And Department Manager" }).render();
-    console.log(logoText);
+    const titleText = title({ name: "Employee And Department Manager" }).render();
+    console.log(titleText);
 }
 
-class CLI{
-    run(){
-        init();
+function cli(){
         inquirer
         .prompt(questions)
         .then(answers=>{
             switch(`${answers.options}`){
                 case 'View':
                     if(`${answers.view}` === 'View All Departments'){
-                        console.log('View All Departments');
                         queries.viewDepartments();
                         startAgain();
                     }
                     else if(`${answers.view}` === 'View All Roles'){
-                        console.log('View All Roles');
+                        queries.viewRoles();
                         startAgain();
                     }
                     else if(`${answers.view}` === 'View All Employees'){
-                        console.log('View All Employees');
                         queries.viewEmployees();
                         startAgain();
                     }
                     else if(`${answers.view}` === 'View Employees by Manager'){
-                        console.log('View Employees by Manager');
-                        startAgain();
+                        viewEmployeesByManager();
                     }
                     else if(`${answers.view}` === 'View Employees by Department'){
-                        console.log('View Employees by Department');
-                        startAgain();
+                        viewEmployeesByDepartment();
                     }
                     else if(`${answers.view}` === 'View Total Utilized Budget'){
-                        console.log('View Total Utilized Budget');
-                        startAgain();
+                        viewBudget();
                     }
                     else{
-                        console.log('cancel');
                         startAgain();
                     }
                     break;
@@ -104,9 +95,81 @@ class CLI{
                     process.exit();
             }
         });
-    }
+}
+
+//view all employees that report to a specific manager
+function viewEmployeesByManager() {
+    db.searchAllEmployees()
+        .then(([rows]) => {
+            let managers = rows;
+            const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+            console.log("\n");
+            inquirer
+                .prompt([
+                    {
+                        type: "list",
+                        name: "managerId",
+                        message: "Which employee do you want to see direct reports for?",
+                        choices: managerChoices
+                    }
+                ])
+                .then(res => db.searchAllEmployeesByManager(res.managerId))
+                .then(([rows]) => {
+                    let employees = rows;
+                    console.log("\n");
+                    if (employees.length === 0) {
+                        console.log("The selected employee has no direct reports");
+                        console.log("\n");
+                    } 
+                    else {
+                        console.table(employees);
+                        console.log("\n");
+                    }
+                })
+                .then(() => startAgain())
+        });
+}
+//view all by department
+function viewEmployeesByDepartment() {
+    db.searchAllDepartments()
+      .then(([rows]) => {
+        let departments = rows;
+        const departmentChoices = departments.map(({ id, name }) => ({
+          name: name,
+          value: id
+        }));
+        inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "departmentId",
+            message: "Which department would you like to see employees for?",
+            choices: departmentChoices
+          }
+        ])
+          .then(res => db.searchAllEmployeesByDepartment(res.departmentId))
+          .then(([rows]) => {
+            let employees = rows;
+            console.log("\n");
+            console.table(employees);
+          })
+          .then(() => startAgain())
+      });
+}
+
+//  all departments + their total utilized budget
+function viewBudget() {
+    db.findDepartmentBudget()
+      .then(([rows]) => {
+        let departments = rows;
+        console.log("\n");
+        console.table(departments);
+      })
+      .then(() => startAgain());
 }
 
 
-
-module.exports = CLI;
+module.exports = cli;

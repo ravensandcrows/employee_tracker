@@ -1,6 +1,5 @@
-const CLI = require('./main/lib/cli');
+const cli = require('./main/lib/cli');
 
 
-const cli = new CLI();
+cli();
 
-cli.run();
