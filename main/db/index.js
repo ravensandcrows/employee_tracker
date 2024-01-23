@@ -29,18 +29,18 @@ class DB {
   }
 
   // search all employees by manager, join with departments and roles to display titles and department names
-  searchAllEmployeesByManager(managerId) {
+  searchAllEmployeesByManager(managerID) {
     return this.connection.promise().query(
       "SELECT employee.id, employee.first_name, employee.last_name, department.name AS department, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id WHERE manager_id = ?;",
-      managerId
+      managerID
     );
   }
 
   //search for all employees within the department
-  searchAllEmployeesByDepartment(departmentId) {
+  searchAllEmployeesByDepartment(departmentID) {
     return this.connection.promise().query(
       "SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department department on role.department_id = department.id WHERE department.id = ?;",
-      departmentId
+      departmentID
     );
   }
   // sums up utilized department budget from all deps
@@ -49,6 +49,21 @@ class DB {
       "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id GROUP BY department.id, department.name;"
     );
   }
+
+  // create a new role
+  buildRole(role) {
+    return this.connection.promise().query("INSERT INTO role SET ?", role);
+  }
+
+  //assign new employee
+  newEmployee(employee) {
+    return this.connection.promise().query("INSERT INTO employee SET ?", employee);
+  }
+
+    // build  department
+    buildDepartment(department) {
+      return this.connection.promise().query("INSERT INTO department SET ?", department);
+    }
 }
 
 module.exports = new DB(connection);
